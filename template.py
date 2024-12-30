@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import logging
 
-logging.basicConfig(level=logging.INFOR, format='[%(asctime)s]: %(message)s ')
+logging.basicConfig(level=logging.INFO, format='[%(asctime)s]: %(message)s ')
 
 project_name= 'ChickenDiseaseClassifier'
 list_of_files = [
@@ -24,3 +24,23 @@ list_of_files = [
 
     
     ]
+
+for filepath in list_of_files:
+    filepath = Path(filepath)
+    filedir, filename = os.path.split(filepath)
+
+    #create the file directory
+    if filedir != "":
+        os.makedirs(filedir, exist_ok=True)
+        logging.info(f"creating file directory, {filedir} for {filename}")
+
+    #create the file
+    if(not os.path.exists(filename)) or (os.path.getsize(filename) ==0):
+        with open(filepath, "w") as f:
+            pass
+            logging.info(f"creating empty file: {filename}")
+
+    else:
+        logging.info(f"{filename} already exists")
+
+
