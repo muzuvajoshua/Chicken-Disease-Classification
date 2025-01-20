@@ -2,20 +2,24 @@ from ChickenDiseaseClassifier.entity.config_entity import TrainingConfig
 import tensorflow as tf
 from pathlib import Path
 
-
 class Training:
     def __init__(self, config: TrainingConfig):
         self.config = config
-    
-    def get_base_model(self):
-        self.model = tf.keras.models.load_model(
-            self.config.updated_base_model_path
-        )
-    
-    def train_valid_generator(self):
+        print("Eager execution:", tf.executing_eagerly())
 
+    def get_base_model(self):
+        self.model = tf.keras.models.load_model(self.config.updated_base_model_path)
+        self.model.compile(
+            optimizer='adam',
+            loss='categorical_crossentropy',
+            metrics=['accuracy']
+        )
+
+        
+
+    def train_valid_generator(self):
         datagenerator_kwargs = dict(
-            rescale = 1./255,
+            rescale=1.0 / 255,
             validation_split=0.20
         )
 
@@ -59,7 +63,6 @@ class Training:
     @staticmethod
     def save_model(path: Path, model: tf.keras.Model):
         model.save(path)
-
 
     def train(self, callback_list: list):
         self.steps_per_epoch = self.train_generator.samples // self.train_generator.batch_size
